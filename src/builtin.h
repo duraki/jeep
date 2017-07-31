@@ -6,8 +6,7 @@ extern const char jeep_more_info_string[];
 
 extern int is_builtin(const char *s);
 
-/** Jeep commands **/
+/** commands **/
 extern int cmd_sniff(int argc, const char **argv, const char *prefix);
-extern int cmd_dump(int argc, const char **argv, const char *prefix);
 
 #endif

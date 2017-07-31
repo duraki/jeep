@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo yum -y install git net-tools
+sudo yum -y install git net-tools vim
 sudo yum -y install gcc gcc-c++
 sudo yum -y install ncurses-devel
 
