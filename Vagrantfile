@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "centos/7"
 
   # Share current directory and sync the data
-  config.vm.synced_folder ".", "/opt/jeep"
+  config.vm.synced_folder "./", "/opt/jeep/"
 
   config.vm.provider "virtualbox" do |vb|
       vb.memory = "1024"
