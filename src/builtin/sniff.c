@@ -32,10 +32,9 @@
 #include <linux/can/bcm.h>
 
 static const char * const jeep_sniff_usage[] = {
-    N_("jeep sniff [device]",
-    N_("jeep sniff [device] |  --verbose"),
+    N_("jeep sniff [device] | [-bB|-c] | --verbose",
+    N_("jeep sniff [device] | --verbose"),
     NULL
-
 }
 
 enum sniff_type { BASIC, MIXED };
