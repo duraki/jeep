@@ -41,7 +41,6 @@ int
 get_art()
 {
     printf("\n%s\n", jeep_art);
-
     return 0;
 }
 

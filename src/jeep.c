@@ -12,7 +12,7 @@ int print_usage()
     const char usage [] = {
         "jeep \t command [-d]evice -info\n"
         "jeep \t command [-l]ist -custom]\n"
-        "jeep \t--about --version\n"
+        "jeep \t --about --version\n"
     };
 
     fprintf(stderr, "%s", usage);
@@ -37,13 +37,12 @@ main(int argc, char *argv[])
                {0, 0, 0, 0}       };
 
     get_art();
-	print_usage();
 
     if (argv[1]) {
         char *cmd = argv[1];
 
         if (strcmp(cmd, "--about") == 0) {
-            printf("jeep - penetration testing framework for vehicle systems\n"); 
+            printf("jeep\t - penetration testing framework for vehicle systems\n"); 
             exit(0);
         }
 
@@ -54,6 +53,14 @@ main(int argc, char *argv[])
         init_builtin(); /* Initialize builtin cmds */    
         printf("[*] Getting command module: %s\n", cmd);
 
+        if (search_cmd(cmd) == -1) {
+            printf("[x] Command not available in built-in system.\n[*] Searching in custom modules.\n");
+        }
+
+    }
+
+    if (argc == 0) {
+	    print_usage();
     }
 
     while (1) {
@@ -66,9 +73,8 @@ main(int argc, char *argv[])
 			printf("\n");
             case 0: break;
             case 'd':
-                printf("Device set to: %s\n", optarg); break;
+                printf("[*] Device set to: %s\n", optarg); break;
             case 'l':
-                printf("Listing all commands: ");
                 if (optarg)
                     printf (", %s!\n", optarg);
                 else
@@ -81,7 +87,7 @@ main(int argc, char *argv[])
     return 0;
 
     
-    print_usage();
+    //print_usage();
 
     return 1;
 }
