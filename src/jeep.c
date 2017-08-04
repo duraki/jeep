@@ -27,7 +27,7 @@ main(int argc, char *argv[])
     char *cmd;              /* command to exec */
 
     char *device;           /* device uuid or mounpoint */
-	bool about = false;     /* is in about */
+    bool about = false;     /* is in about */
     bool list = false;      /* is in list */
 
     int getopt_ret, option_index;
