@@ -9,10 +9,9 @@ const char *cmd[][3] = {
 };
 
 struct CMD {
-   char  title[50];
+   char  name[20];
    char  author[50];
    char  description[500];
-   char  name[100];
    int   builtin;
 };  
 
@@ -22,8 +21,34 @@ struct cmd_builtin {
 };
 struct cmd_builtin builtin;
 
+int total_builtin;              /* total builtin cmd */
+
 int 
 init_builtin()
+{
+    struct CMD c; 
+    int total = sizeof(cmd)/sizeof(cmd[0]);
+
+    for (int i = 0; i < total; i++)
+    {
+        struct CMD c;
+
+        strcpy(c.name, cmd[i][0]);
+        strcpy(c.author, cmd[i][1]);
+        strcpy(c.description, cmd[i][2]);
+        c.builtin = cmd[i][3];
+    
+        builtin.id = i;
+        builtin.command = c;
+
+        total_builtin++;
+    }
+
+    return 1;
+}
+
+int 
+list_builtin()
 {
     struct CMD c; 
     int total = sizeof(cmd)/sizeof(cmd[0]);
@@ -41,16 +66,17 @@ init_builtin()
     }
 
     printf("\n");
+    exit(0);
 }
 
 static int
-search_cmd(char c[])
+search_cmd(char c[20])
 {
-
-    for (int i = 0; i < sizeof(cmd)/sizeof(cmd[0]); i++) {
+    for (int i = 0; i < total_builtin; i++) {
         if (strcmp(c, cmd[i][0]) == 0) {
-            printf("[*] Command available; exec ...\n");
-            return i;
+            printf("\n[*] Found command `%s`, exec fork ...\n", c);
+
+            return 0;
         }
     }
 
