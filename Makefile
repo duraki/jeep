@@ -1,11 +1,23 @@
 PROJECT_NAME=jeep
+BUILDOUT=bin
 CC=gcc -w -std=c99
 
 SOURCES = src/jeep.c
 
+BUILDCMD_DIR = src/builtin
+BUILDCMD_IN  = $(BUILDCMD_DIR)/sniff.c 
+BUILDCMD_OUT = $(BUILDOUT)/sniff
+
 all:
+	# bin
+	# builtin cmds
+	$(CC) -pthread -lncurses $(BUILDCMD_IN) -o $(BUILDCMD_OUT)
+
+  # kernel
+	$(CC) -pthread $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
+
+  # obj 
 	$(CC) -pthread -c $(SOURCES) 
-	$(CC) -pthread $(SOURCES) -o bin/$(PROJECT_NAME) 
 	mv *.o obj/
 
 clean:
