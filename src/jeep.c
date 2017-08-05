@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <string.h>
 
 int print_usage()
 {
     const char usage [] = {
-        "jeep \t command [-d]evice -info\n"
-        "jeep \t command [-l]ist -custom]\n"
-        "jeep \t --about --version\n"
+        "jeep \t command [--d=xxxxxx] | device | -info\n"
+        "jeep \t command [--l=custom] | list\n"
+        "jeep \t --about --version\n\n"
     };
 
     fprintf(stderr, "%s", usage);
@@ -37,6 +38,8 @@ main(int argc, char *argv[])
                {0, 0, 0, 0}       };
 
     get_art();
+    init_builtin();         /* init builtin cmds */
+    init_custom();          /* init custom cmds */
 
     if (argv[1]) {
         char *cmd = argv[1];
@@ -50,7 +53,10 @@ main(int argc, char *argv[])
             exit(get_version());
         }
 
-        init_builtin(); /* Initialize builtin cmds */    
+        if (strcmp(cmd, "--list") == 0) {
+            list_builtin(); /* list builtin cmds */    
+        }
+
         printf("[*] Getting command module: %s\n", cmd);
 
         if (search_cmd(cmd) == -1) {
@@ -59,8 +65,8 @@ main(int argc, char *argv[])
 
     }
 
-    if (argc == 0) {
-	    print_usage();
+    if (argc <= 1) { /* no args */
+	print_usage();
     }
 
     while (1) {
@@ -70,24 +76,25 @@ main(int argc, char *argv[])
 
         switch(getopt_ret)
         {
-			printf("\n");
+	    printf("\n");
             case 0: break;
             case 'd':
                 printf("[*] Device set to: %s\n", optarg); break;
+                break;
             case 'l':
                 if (optarg)
-                    printf (", %s!\n", optarg);
-                else
-                    printf ("!\n", optarg);
+                    printf("[*] List command: %s\n", optarg);
+                    if (strcmp(optarg, "custom") == 0)
+                        list_custom();
+                    if (strcmp(optarg, "builtin") == 0)
+                        list_builtin();
+                    
+                printf("Can't print from that point of subcommands.\n");
                 break;
             case '?':
                 printf("\nProcess got unknown option.\n"); break;
         }
     } 
-    return 0;
-
-    
-    //print_usage();
 
     return 1;
 }
