@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
   # Configure development environment 
   config.vm.provision :shell, path: "./data/tools"
 
-  # AUto rsync on startup
+  # Auto rsync on startup
   config.gatling.rsync_on_startup = true
 
 end
