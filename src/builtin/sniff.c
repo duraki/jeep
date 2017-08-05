@@ -1,6 +1,8 @@
 /**
  *
- * Dump CAN traffic and show diff.
+ * Dump CAN traffic and show diff in a table. Includes colored output and
+ * speicific sort or filter.
+ *
  * sniff.c 
  *
  * Copyright (c) 2017 Halis Duraki. All rights reserved.
@@ -32,22 +34,19 @@
 #include <linux/can/bcm.h>
 
 static const char * const jeep_sniff_usage[] = {
-    N_("jeep sniff [device] | [-bB|-c] | --verbose",
-    N_("jeep sniff [device] | --verbose"),
+    N_("[jeep] sniff [device]",
+    N_("[jeep] sniff [device]"),
     NULL
 }
 
 enum sniff_type { BASIC, MIXED };
+
 static const char *sniff_type_names[] = {
     N_("basic"), N_("mixed"), NULL
 };
 
-static void parse_args(const char **argv, const char *prefix)
+int main(int argc, char *argv[])
 {
 
 }
 
-int cmd_sniff(int argc, char **argv, const char *prefix)
-{
-    return 0;
-}
