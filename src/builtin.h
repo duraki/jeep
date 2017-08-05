@@ -3,6 +3,8 @@
 
 #define _DEBUG 1;
 
+#include <dirent.h>
+
 const char *cmd[][3] = {
     {"sniff", "Halis Duraki", "Sniff CAN device for datachange.", 1},
     {"dump", "Halis Duraki", "Dump CAN device data.", 1}
@@ -47,6 +49,12 @@ init_builtin()
     return 1;
 }
 
+int
+init_custom()
+{
+    return;
+}
+
 int 
 list_builtin()
 {
@@ -65,6 +73,14 @@ list_builtin()
                                             cmd[i][2]);
     }
 
+    printf("\n");
+    exit(0);
+}
+
+int
+list_custom()
+{
+    printf("[x] No custom plugins or sub-commands.\n");
     printf("\n");
     exit(0);
 }
