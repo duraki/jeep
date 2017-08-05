@@ -35,8 +35,10 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/uio.h>
-#include <net/if.h>
+#include <linux/if.h>
 
+#include <linux/if_packet.h>
+#include <linux/if_ether.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
@@ -116,6 +118,37 @@ get_interface_list()
 
     fclose(fp); /* close fh */
 	return ldevice;
+
+}
+
+/*
+ * Create socket.
+ *
+ * Initialize a new raw socket with for communication. Initialize any device
+ * with creating socket before anything else.
+ */
+int
+create_socket()
+{
+    int s; /* socket idx */
+    s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_CAN)); /* create socket */
+
+    return s;
+}
+
+int
+bind_socket(int irf, int socket, struct sockaddr_ll sl)
+{
+	sl.sll_family = AF_PACKET;
+    sl.sll_ifindex = irf;
+    sl.sll_protocol = htons(ETH_P_CAN);
+
+    if (bind(&socket, (struct sockaddr *) &sl, sizeof(sl)) < 0) {
+        perror("bind"); 
+        return -1;
+    }
+
+    return 0;
 
 }
 
