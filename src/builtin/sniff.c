@@ -34,6 +34,8 @@
 #include <linux/can.h>
 #include <linux/can/bcm.h>
 
+#include "api.h"
+
 #define MODNAME "sniff"
 #define MODVERS "1.0.0"
 
@@ -62,8 +64,9 @@ init_screen()
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
 
+    attron(A_BOLD); /* set style */
+
     /* print modname */
-    attron(A_BOLD);
     char modname[50];
     sprintf(modname, "modname: [%s]", MODNAME);
     printw(modname);
