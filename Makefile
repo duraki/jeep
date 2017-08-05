@@ -1,5 +1,5 @@
 PROJECT_NAME=jeep
-CC=gcc -std=c99
+CC=gcc -w -std=c99
 
 SOURCES = src/jeep.c
 
