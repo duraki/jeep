@@ -143,7 +143,7 @@ bind_socket(int irf, int socket, struct sockaddr_ll sl)
     sl.sll_ifindex = irf;
     sl.sll_protocol = htons(ETH_P_CAN);
 
-    if (bind(&socket, (struct sockaddr *) &sl, sizeof(sl)) < 0) {
+    if (bind(socket, (struct sockaddr *) &sl, sizeof(sl)) < 0) {
         perror("bind"); 
         return -1;
     }
