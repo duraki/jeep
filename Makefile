@@ -14,7 +14,7 @@ all:
 	$(CC) -pthread -lncurses $(BUILDCMD_IN) -o $(BUILDCMD_OUT)
 
   # kernel
-	$(CC) -pthread $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
+	$(CC) -pthread -lncurses $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
 
   # obj 
 	$(CC) -pthread -c $(SOURCES) 
