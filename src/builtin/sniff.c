@@ -134,6 +134,10 @@ init_sniff()
     static struct ifreq ifr; /* instance */
     static struct sockaddr_ll sl; 
 
+    initscr();
+    int x, y; /* visible area */
+    getmaxyx(stdscr, y, x);
+
     s = create_socket(); /* use api to create a raw socket */
     if (s < 0)
         perror("socket");
@@ -146,11 +150,14 @@ init_sniff()
         ioctl(s, SIOCGIFINDEX, &ifr);
         ifindex = ifr.ifr_ifindex;
 
-    if (bind_socket(ifindex, s, sl) < 0)
-        perror("bind");
+    if (bind_socket(ifindex, s, sl) > 0)
+        wprintw(y/2, (x-50)/2, "Error while binding socket.");
+        refresh();
+        endwin();
+        getch();
 
     while (1) {
-
+        
     }
 
     return 1;
