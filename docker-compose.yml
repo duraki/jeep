@@ -1,0 +1,5 @@
+jeep:
+    build: .
+    tty: true    
+    volumes:
+        - "./:/opt/jeep:delegated"
