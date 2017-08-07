@@ -35,9 +35,11 @@
 #include <linux/can/bcm.h>
 
 #include "api.h"
+#include "ui.h"
+#include "util.h"
 
 #define MODNAME "sniff"
-#define MODVERS "1.0.0"
+#define MODVERSION "1.0.0"
 
 #define INTERFACE "*"
 
@@ -46,8 +48,10 @@
 #define HOLD    100 /* in 10ms */
 #define LOOP     20 /* in 10ms */
 
+#define PAD     50
+
 static 
-const char * const jeep_sniff_usage[] = {
+const char * jeep_sniff_usage[] = {
     "[jeep] sniff [device]",
     "[jeep] sniff [device]",
     NULL
@@ -74,55 +78,7 @@ struct sniff {
 
 char *interface = INTERFACE;
 
-int
-init_screen()
-{
-    initscr();
-    int x, y; /* visible area */
-    getmaxyx(stdscr, y, x);
-
-    start_color();
-    init_pair(1, COLOR_BLUE, COLOR_BLACK);
-
-    attron(COLOR_PAIR(1) | A_BOLD); /* set style */
-
-    /* print modname */
-    char modname[50];
-    sprintf(modname, "modname: [%s]", MODNAME);
-    printw(modname);
-
-    /* print modversion */
-    char modversion[50];
-    sprintf(modversion, "modversion: [%s]", MODVERS);
-    mvprintw(0, (x-strlen(modname))/2, modversion);
-
-    /* print interface */
-    char inf[50];
-    sprintf(inf, "interface: [%s]", INTERFACE);
-    mvprintw(0, x-strlen(inf), inf);
-
-    attroff(COLOR_PAIR(1));
-
-    move(y+3, x);
-    printw("\n%-10s %-10s %-30s %-30s\n\n", 
-            "TIMEOUT", 
-            "ARBID",
-            "DATA", 
-            "ASCII",
-            "BIN",
-            "LAST CHANGE");
-
-
-    attroff(A_BOLD);
-    mvprintw(y-1, 0, "mode: %s", sniff_type_names[0]);
-
-    refresh();
-    noecho();
-    getch();
-    endwin();
-
-    return 1;
-}
+int row, col; /* term size */
 
 int 
 init_sniff()
@@ -156,17 +112,80 @@ init_sniff()
         endwin();
         getch();
 
-    while (1) {
-        
-    }
-
     return 1;
+}
+
+int
+print_table()
+{
+    initscr();
+    getmaxyx(stdscr, row, col);
+
+    attroff(COLOR_PAIR(1));
+
+    static const char *table[] = {
+        "TIMEOUT", "ARBID",
+        "DATA", "ASCII", NULL
+    };
+
+    int ct = 2;
+    int cr = row/4;
+
+    mvprintw(ct, 0, table[0]);
+    mvprintw(ct, (cr+strlen(table[0])), table[1]);
+    mvprintw(ct, (cr+cr+cr+strlen(table[1])), table[2]);
+    mvprintw(ct, col-strlen(table[3]), table[3]);
+
+    refresh();
+}
+
+int
+print_footer()
+{
+    int x, y;
+    initscr();
+    getmaxyx(stdscr, y, x);
+
+    attroff(A_BOLD);
+    mvprintw(y-1, 0, "mode: %s", sniff_type_names[0]);
+
+    refresh();
+}
+
+int
+init_win()
+{
+    initscr();
+    int x, y;
+    getmaxyx(stdscr, y, x);
+
+    row = x;
+    col = y;
+}
+
+int
+init_module()
+{
+    initscr();
+
+    flog("Initializing module.");
+    print_table();
+    print_footer();
+
+    refresh();
+    getch();
 }
 
 int 
 main(int argc, char *argv[])
 {
-    init_screen();
-    init_sniff();
+    initscr(); /* must always init first */
+
+    init_win();
+    ui_module(MODNAME, MODVERSION, INTERFACE, row, col);
+    init_module();
+
+    getch();
+    endwin();
 }
 
