@@ -1,0 +1,66 @@
+% jeep.tex [jeep + penetration testing framework for vehicles]
+
+% doclass 
+\documentclass[twocolumn, a4paper, 10pt]{report}
+
+
+% deps
+\usepackage{lipsum}     % autogen lorem ipsum
+\usepackage{titling}    % allow messing with titles
+\usepackage{blindtext}  % manipualte loop
+\usepackage{afterpage}  % page manipulation
+\usepackage{color}      % lets give it a shine
+
+% doc
+\begin{document}
+
+% -- REPORT COVER BEGIN --
+% style
+\pagecolor{black}
+\color{white}
+
+% report
+\title{%
+    jeep \\
+    \large penetration testing framework for vehicle systems \\}
+\author{Halis Duraki}
+\date{\today \\
+{\large https://duraki.github.io/jeep}}
+
+\maketitle
+
+% style
+\pagecolor{white}
+\color{black}
+
+% report
+\title{%
+    jeep \\
+    \large penetration testing framework for vehicle systems \\}
+\author{Halis Duraki}
+\date{\today}
+\maketitle
+
+% -- REPORT COVER END --
+
+\begin{abstract}
+We spend most of our time connected, available to the world, online. We
+managed to overcome another obstacle when Internet of Things happened. 
+We can positively say that in the near future, almost every device around us 
+will communicate with each other. A new era is born quite fast, when news paper
+started writing articles about "smart" and "AI" powered cars, running on electricity and
+batteries.
+Such cars, equiped with a special software that can recieve software updates over the 
+network, [which] increase your vehicle HP, or for instance make your vehicle spend
+less electricty while in use, already exists - like Tesla for example. But what other, older cars are running? How do
+they work, if they aren't smart, nor mechanic? They must be connected somehow. 
+By gathering information and analyzing CAN bus protocol, while constantly
+disovering real life scenarios on vehicles, we developed a software framework which will help
+security researchers to investigate, and debug vehicle systems. The framework is
+exstensible in various ways, and offer several modules, some of them presented
+in this paper. One can use our
+framework in development or research purpose. We will finish the paper with demonstration
+and a valid usage information.
+\end{abstract}
+
+\end{document}

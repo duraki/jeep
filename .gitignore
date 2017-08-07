@@ -3,5 +3,3 @@ log/
 bin/
 obj/
 .DS_Store
-docs/tex
-!docs/tex/*.tex
