@@ -136,10 +136,17 @@ create_socket()
     return s;
 }
 
+/*
+ * Bind to socket.
+ *
+ * irf: interface index
+ * socket: socket 
+ * sl: ll header
+ */
 int
 bind_socket(int irf, int socket, struct sockaddr_ll sl)
 {
-	sl.sll_family = AF_PACKET;
+    sl.sll_family = AF_PACKET;
     sl.sll_ifindex = irf;
     sl.sll_protocol = htons(ETH_P_CAN);
 
