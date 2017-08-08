@@ -49,13 +49,26 @@ init_builtin()
     return 1;
 }
 
+// xxx: implement custom cmds
 int
 init_custom()
 {
     return;
 }
 
-int 
+// xxx: implement list custom cmds
+void
+list_custom()
+{
+    printf("[x] No custom plugins or sub-commands.\n");
+    printf("\n");
+    exit(0);
+}
+
+/**
+ * List builtin commands.
+ */
+void
 list_builtin()
 {
     struct CMD c; 
@@ -67,24 +80,18 @@ list_builtin()
     for (int i = 0; i < total; i++) 
     {
         printf("%i\t\t\%s\t\t %s\t\t %s\t\n", 
-                                            i,
-                                            cmd[i][0], 
-                                            cmd[i][1], 
-                                            cmd[i][2]);
+                i,
+                cmd[i][0], 
+                cmd[i][1], 
+                cmd[i][2]);
     }
 
     printf("\n");
-    exit(0);
 }
 
-int
-list_custom()
-{
-    printf("[x] No custom plugins or sub-commands.\n");
-    printf("\n");
-    exit(0);
-}
-
+/**
+ * Locate builtin / custom cmd
+ */
 static int
 search_cmd(char c[20])
 {
@@ -98,13 +105,5 @@ search_cmd(char c[20])
 
     return -1;
 }
-
-extern const char jeep_usage_string[];
-extern const char jeep_more_info_string[];
-
-extern int is_builtin(const char *s);
-
-/** commands **/
-extern int cmd_sniff(int argc, const char **argv, const char *prefix);
 
 #endif
