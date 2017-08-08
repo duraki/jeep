@@ -108,21 +108,24 @@ main(int argc, char *argv[])
 
         if (strcmp(cmd, "--about") == 0) {
             printf("[o_o] `jeep`\t - penetration testing framework for vehicle systems\n"); 
-            exit(0);
+            return 1;
         }
 
         if (strcmp(cmd, "--version") == 0) {
-            exit(get_version());
+            get_version();
+            return 1;
         }
 
         if (strcmp(cmd, "--list") == 0) {
-            list_builtin(); /* list builtin cmds */    
+            list_builtin();
+            return 0;
         }
 
         printf("[*] Getting command module: %s\n", cmd);
 
         if (search_cmd(cmd) == -1) {
             printf("[x] Command not available in built-in system.\n[*] Searching in custom modules.\n");
+            return 1;
         }
 
     }
@@ -144,17 +147,20 @@ main(int argc, char *argv[])
                 printf("[*] Device set to: %s\n", optarg); break;
                 break;
             case 'l':
-                if (optarg)
+                if (!optarg) { /* --l */
+                    list_builtin();
+                    return 1;
+                } else {
                     printf("[*] List command: %s\n", optarg);
                     if (strcmp(optarg, "custom") == 0)
                         list_custom();
-                    if (strcmp(optarg, "builtin") == 0)
-                        list_builtin();
-                    
-                printf("Can't print from that point of subcommands.\n");
+                    return 1;
+                }
                 break;
+
             case '?':
-                printf("\nProcess got unknown option.\n"); break;
+                return 1;
+                break;
         }
     } 
 
