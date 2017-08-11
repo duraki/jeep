@@ -80,37 +80,49 @@ char *interface = INTERFACE;
 
 int row, col; /* term size */
 
-int 
-init_sniff()
+int sniff()
 {
     int s;
     struct can_frame frame;
     int size, i;
     int ifindex; /* ifr index */
+    int ct_sniff = 4;
+    int cr = row/4;
+
     static struct ifreq ifr; /* instance */
     static struct sockaddr_ll sl; 
 
     initscr();
-    int x, y; /* visible area */
-    getmaxyx(stdscr, y, x);
+    getmaxyx(stdscr, row, col);
 
-    s = create_socket(); /* use api to create a raw socket */
+    attroff(COLOR_PAIR(1));
+    
+    s = create_socket();
     if (s < 0)
         perror("socket");
 
     if (strcmp(interface, INTERFACE) == 0)
-        ifindex = 0; /* listen to all interfaces */
+        ifindex = 0; /* any */
 
-    if (strcmp(interface, INTERFACE) != 0)
+    if (strcmp(interface, INTERFACE) != 0) {
         strcpy(ifr.ifr_name, interface);
-        ioctl(s, SIOCGIFINDEX, &ifr);
-        ifindex = ifr.ifr_ifindex;
+        ifindex = ifr.ifr_ifindex; 
+    }
 
-    if (bind_socket(ifindex, s, sl) > 0)
-        wprintw(y/2, (x-50)/2, "Error while binding socket.");
+    if (bind_socket(ifindex, s, sl) != 0) {
+        mvprintw(col/2, (row-50)/2, "Error while binding socket.");
         refresh();
         endwin();
-        getch();
+    }
+
+    while (1) {
+
+        if ((size = read(s, &frame, sizeof(struct can_frame)) < 0)) {
+container_name: jeep
+            flog("Invalid frame...");
+        }
+
+    }
 
     return 1;
 }
@@ -171,6 +183,8 @@ init_module()
     flog("Initializing module.");
     print_table();
     print_footer();
+
+    sniff();
 
     refresh();
     getch();

@@ -1,9 +1,9 @@
 /*
  * Display version name and module plus interface attached to it.
  *
- * name: Module name
- * version: Module version
- * iface: Interface
+ * name: module name
+ * version: module version
+ * iface: interface
  * row, col: /
  */
 int ui_module(char *name, char *version, char *iface,
