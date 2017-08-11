@@ -1,5 +1,11 @@
-jeep:
-    build: .
-    tty: true    
-    volumes:
-        - "./:/opt/jeep:delegated"
+version: "3"
+services:
+
+    jeep:
+        build: .
+        container_name: jeep
+        tty: true    
+        cap_add:
+            - ALL
+        volumes:
+            - "./:/opt/jeep:delegated"
