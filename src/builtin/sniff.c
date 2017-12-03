@@ -10,6 +10,12 @@
  * Author:
  * Halis Duraki <duraki.halis@nsoft.com> 
  *
+ *           ____________ ____ 
+ *          / /__  /__  // __ \
+ *     __  / / /_ < /_ </ /_/ /
+ *    / /_/ /___/ /__/ / ____/ 
+ *    \____//____/____/_/      
+ *                             
  **/
 
 #include <stdio.h>
@@ -117,9 +123,14 @@ int sniff()
 
     while (1) {
 
-        if ((size = read(s, &frame, sizeof(struct can_frame)) < 0)) {
-container_name: jeep
-            flog("Invalid frame...");
+        if ((size = read(s, &frame, sizeof(struct can_frame))) < 0) {
+            flog("Can't read from device.");
+            return 1;
+        } else if (size < sizeof(struct can_frame)) {
+            flog("Can't detect valid frame structure.");
+            return 1;
+        } else {
+            //fprintf(stdout, "Its working!");
         }
 
     }
@@ -133,7 +144,7 @@ print_table()
     initscr();
     getmaxyx(stdscr, row, col);
 
-    attroff(COLOR_PAIR(1));
+    attron(COLOR_PAIR(1) | A_BOLD);
 
     static const char *table[] = {
         "TIMEOUT", "ARBID",
@@ -187,19 +198,20 @@ init_module()
     sniff();
 
     refresh();
-    getch();
+    //getch();
 }
 
 int 
 main(int argc, char *argv[])
 {
     initscr(); /* must always init first */
-
     init_win();
+
     ui_module(MODNAME, MODVERSION, INTERFACE, row, col);
+    ui_help(default_help_msg);
     init_module();
 
-    getch();
+    ui_freeze();
     endwin();
 }
 
