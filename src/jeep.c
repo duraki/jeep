@@ -12,6 +12,12 @@
  * Author:
  * Halis Duraki <duraki.halis@nsoft.com> 
  *
+ *           ____________ ____ 
+ *          / /__  /__  // __ \
+ *     __  / / /_ < /_ </ /_/ /
+ *    / /_/ /___/ /__/ / ____/ 
+ *    \____//____/____/_/      
+ *                             
  **/
 
 #include <string.h>
@@ -29,10 +35,10 @@
 int print_usage()
 {
     const char usage [] = {
-        "jeep \t --devices [-info]\n"
         "jeep \t --about --version\n\n"
-        "jeep \t command [--d=xxxxxx] | device | -info\n"
-        "jeep \t command [--l=custom] | list\n\n"
+        "jeep \t command [--list]     | list commands\n"
+        "jeep \t command [--devices]  | list devices | -info\n"
+        "jeep \t command [--device] # | select devices\n"
     };
 
     fprintf(stderr, "%s", usage);
@@ -48,6 +54,13 @@ win_devices(struct device_i *dev_l)
     getmaxyx(stdscr, y, x);
     attron(A_BOLD); 
 
+    /**
+     * xxx: impl proper way to automagically detect instance of PF_CAN* netdev
+     * using one of the following ways presented 
+     * 
+     * @see <http://man7.org/linux/man-pages/man3/getifaddrs.3.html>
+     *
+     */
     printw("%-10s %-30s %-10s %-20s %-10s %-10s\n\n", 
             "[#]", 
             "DEVICE",
@@ -72,8 +85,14 @@ win_devices(struct device_i *dev_l)
         }
     }
 
+    mvprintw(y-1, 0, "%-20s\n", "Press `q` to quit devices list.");
+
     refresh();
-    getch();
+    char *c;
+    while ((c = getchar()) != 'q') {
+        // # => Skip non-known chars
+    }
+
     endwin();
 }
 
@@ -83,7 +102,7 @@ main(int argc, char *argv[])
     char *pname = argv[0];  /* parent proc name */
     char *cmd;              /* command to exec */
 
-    char *device;           /* device uuid or mounpoint */
+    char *device[IFNAMSIZ]; /* device uuid or mounpoint */
     bool about = false;     /* is in about */
     bool list = false;      /* is in list */
 
@@ -99,6 +118,22 @@ main(int argc, char *argv[])
 
     if (argv[1]) {
         char *cmd = argv[1];
+
+        if (strcmp(cmd, "--device") == 0) { /* got device selection */
+            if (!argv[3] || !argv[2] || strcmp(argv[2], "") == 0) { 
+                printf("[*] `jeep` device selection requires argument `device`, `command`\n");
+                exit(0);
+            }
+
+            printf("[*] Searching and selecting device: %s\n", argv[2]);
+            strcpy(*device, argv[2]);
+            printf("[*] Selected device: [%s]\n", *device);
+
+            if (search_cmd(argv[3]) == -1) {
+                printf("[x] Command not available in built-in system.\n");
+                exit(0);
+            }
+        }
 
         if (strcmp(cmd, "--devices") == 0) { /* todo: -info */
             printf("[*] Searching for connected devices ...\n"); 
