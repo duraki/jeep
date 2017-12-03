@@ -9,14 +9,13 @@ BUILDCMD_IN  = $(BUILDCMD_DIR)/sniff.c
 BUILDCMD_OUT = $(BUILDOUT)/sniff
 
 all:
-	# bin
 	# builtin cmds
 	$(CC) -pthread -lncurses $(BUILDCMD_IN) -o $(BUILDCMD_OUT)
 
-  # kernel
+	# kernel
 	$(CC) -pthread -lncurses $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
 
-  # obj 
+	# obj 
 	$(CC) -pthread -c $(SOURCES) 
 	mv *.o obj/
 
