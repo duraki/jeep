@@ -47,6 +47,9 @@
 #include <ifaddrs.h>
 #include <linux/if_link.h>
 
+#include "util.h"
+#include "maxim.h"
+
 #define MAXIFACE 30     /* max. number of all interfaces */
 #define MAXSOCK 16      /* max. number of CAN interfaces */
 #define MAXIFNAMES 30   /* size of receive name index */
@@ -57,6 +60,10 @@
 #define SILENT_OFF 0  /* no silent mode */
 #define SILENT_ANI 1  /* silent mode with animation */
 #define SILENT_ON  2  /* silent mode (completely silent) */
+
+#define ANYIF      0  /* default interface */
+
+#define MODULE     "API"
 
 const int canfd_on = 1;
 
@@ -117,8 +124,7 @@ get_interface_list()
     }
 
     fclose(fp); /* close fh */
-	return ldevice;
-
+    return ldevice;
 }
 
 /*
@@ -130,10 +136,33 @@ get_interface_list()
 int
 create_socket()
 {
+    say(MODULE, "Creating a new socket instance ...");
     int s; /* socket idx */
     s = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_CAN)); /* create socket */
 
+    if (s < 0)
+        perror("socket");
+
+    char s_ind[50];
+    snprintf(s_ind, 50, "SOCKT: created socket instance ... %d", s);
+    say(MODULE, s_ind);
+
     return s;
+}
+
+int 
+interface_index(char* ifname)
+{
+    int index;
+    //printf("Got index with name: %s\n", ifname);
+    //
+    if ((0 == if_nametoindex(ifname))) {
+        printf("Selecting all devices, device `%s` not found, index: %d\n", ifname, index);
+    } else {
+        printf("Selected device [%s] and index: %d\n", ifname, if_nametoindex(ifname));
+    }
+
+    return if_nametoindex(ifname);
 }
 
 /*
@@ -143,20 +172,44 @@ create_socket()
  * socket: socket 
  * sl: ll header
  */
-int
-bind_socket(int irf, int socket, struct sockaddr_ll sl)
+struct sockaddr_ll
+bind_socket(int if_in, int *socket, struct sockaddr_ll sl)
 {
+    say(MODULE, "Selecting transmission packet");
     sl.sll_family = AF_PACKET;
-    sl.sll_ifindex = irf;
+
+    say(MODULE, "Selecting tty index");
+    sl.sll_ifindex = if_in;
+
+    say(MODULE, "Selecting protocol by network");
     sl.sll_protocol = htons(ETH_P_CAN);
 
-    if (bind(socket, (struct sockaddr *) &sl, sizeof(sl)) < 0) {
-        perror("bind"); 
-        return -1;
+    if (bind(*socket, (struct sockaddr *) &sl, sizeof(sl)) < 0) {
+        say(MODULE, "ERROR: Can't bind to socket :( Bad file descriptor?");
+        printf("Can't bind to device, check logs for more details.\n");
+        perror("bind");
+        exit(0);
     }
 
-    return 0;
+    say(MODULE, "YAY, socket ready, are you?");
+    return sl;
+}
 
+struct can_frame
+read_socket(int *socket)
+{
+    say(MODULE, "Reading from socket ...");
+
+    int    size;
+    struct can_frame frame;
+    
+    if ((size = read(socket, &frame, sizeof(struct can_frame))) < 0) {
+        say(MODULE, "Can't read from interface, something must be wrong ...");
+    } else if (size < sizeof(struct can_frame)) {
+        say(MODULE, "Invalid frame detected, what device is this?");
+    } else {
+        say(MODULE, "Got new frame, w00t!?");
+    }
 }
 
 #endif
