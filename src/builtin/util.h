@@ -1,17 +1,38 @@
-#define LOGFILE "/tmp/jeep.log"
+#ifndef JEEP_UTIL
+#define JEEP_UTIL
+
+#define LOGFILE     "/tmp/jeep.log"
 
 /**
- * Log data to logfile.
- *
- * message: A log message.
+ * @const LOG 
+ */
+const char *LOG   = "LOG.JEEP";
+
+/**
+ * Logger.
  */
 int
-flog(char *message)
+say(char *module, char *message)
 {
     FILE *f;
-    f = fopen(LOGFILE, "a+"); 
-    if (f == NULL) { /* Something is wrong   */}
+    time_t dt  = time(NULL);
 
-    fprintf(f, "%s\n", message);
+    printf("%s\n", message);
+
+    f = fopen(LOGFILE, "a+"); 
+    if (f == NULL) { return; }
+
+    if (module[0] == '\0') {
+        strcpy(*module, "none"); 
+    }
+
+    char *dtb = asctime(localtime(&dt));
+    char *logtime[50];
+    dtb[strlen(dtb)-1] = 0;
+
+    fprintf(f, "[%s] %s.%s, %s\n", dtb, LOG, module, message);
+
     fclose(f);
 }
+
+#endif
