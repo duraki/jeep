@@ -1,3 +1,8 @@
+#ifndef JEEP_UI
+#define JEEP_UI
+
+#include "util.h"
+
 const char *default_help_msg = "Press `q` to quit.";
 
 /*
@@ -13,6 +18,8 @@ ui_module(char *name, char *version, char *iface, int row, int col)
 {
     initscr();
     init_pair(1, COLOR_BLUE, COLOR_BLACK);
+
+    say("UI", "Initializing UI for module info");
 
     //attron(COLOR_PAIR(1) | A_BOLD); /* set style */
 
@@ -55,3 +62,48 @@ ui_help(char *msg)
     mvprintw(y-2, 0, "%-20s\n", msg);
 }
 
+int
+ui_win(int *row, int *col)
+{
+    int x, y;
+    initscr();
+    getmaxyx(stdscr, y, x);
+
+    *row = x;
+    *col = y;
+}
+
+int
+ui_footer(char *msg)
+{
+    int x, y;
+    initscr();
+    getmaxyx(stdscr, y, x);
+
+    attroff(A_BOLD);
+    mvprintw(y-1, 0, "f: %s", msg);
+
+    refresh();
+}
+
+int
+ui_table(char *th[], int sth, int row, int col)
+{
+    int x, y;
+    initscr();
+    getmaxyx(stdscr, row, col);
+
+    attron(COLOR_PAIR(1) | A_BOLD);
+
+    int ct = 2;
+    int cr = row/4;
+
+    mvprintw(ct, 0, th[0]);
+    mvprintw(ct, (cr+strlen(th[0])), th[1]);
+    mvprintw(ct, (cr+cr+cr+strlen(th[1])), th[2]);
+    mvprintw(ct, col-strlen(th[3]), th[3]);
+
+    refresh();
+}
+
+#endif
