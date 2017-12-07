@@ -44,10 +44,8 @@
 #include "ui.h"
 #include "util.h"
 
-#define MODNAME "sniff"
-#define MODVERSION "1.0.0"
-
-#define INTERFACE "*"
+#define MODNAME     "sniff"
+#define MODVERSION  "1.0.0"
 
 /* time defults */
 #define TIMEOUT 500 /* in 10ms */
@@ -71,147 +69,94 @@ const char *sniff_type_names[] = {
 };
 
 struct sniff {
-    int flags;
-    long hold;
-    long timeout;
-    struct timeval laststamp;
-    struct timeval currstamp;
-    struct can_frame last;
-    struct can_frame current;
-    struct can_frame marker;
-    struct can_frame notch;
+    int     flags;
+    long    hold;
+    long    timeout;
+    struct  timeval     laststamp;
+    struct  timeval     currstamp;
+    struct  can_frame   last;
+    struct  can_frame   current;
+    struct  can_frame   marker;
+    struct  can_frame   notch;
 } sniftab[2048];
 
-char *interface = INTERFACE;
+static const char *thead[] = {
+    "TIMEOUT", "ARBID",
+    "DATA", "ASCII", NULL
+};
+
+int ifindex    = 0;
+char *interface = 0;
 
 int row, col; /* term size */
-
-int sniff()
-{
-    int s;
-    struct can_frame frame;
-    int size, i;
-    int ifindex; /* ifr index */
-    int ct_sniff = 4;
-    int cr = row/4;
-
-    static struct ifreq ifr; /* instance */
-    static struct sockaddr_ll sl; 
-
-    initscr();
-    getmaxyx(stdscr, row, col);
-
-    attroff(COLOR_PAIR(1));
-    
-    s = create_socket();
-    if (s < 0)
-        perror("socket");
-
-    if (strcmp(interface, INTERFACE) == 0)
-        ifindex = 0; /* any */
-
-    if (strcmp(interface, INTERFACE) != 0) {
-        strcpy(ifr.ifr_name, interface);
-        ifindex = ifr.ifr_ifindex; 
-    }
-
-    if (bind_socket(ifindex, s, sl) != 0) {
-        mvprintw(col/2, (row-50)/2, "Error while binding socket.");
-        refresh();
-        endwin();
-    }
-
-    while (1) {
-
-        if ((size = read(s, &frame, sizeof(struct can_frame))) < 0) {
-            flog("Can't read from device.");
-            return 1;
-        } else if (size < sizeof(struct can_frame)) {
-            flog("Can't detect valid frame structure.");
-            return 1;
-        } else {
-            //fprintf(stdout, "Its working!");
-        }
-
-    }
-
-    return 1;
-}
-
-int
-print_table()
-{
-    initscr();
-    getmaxyx(stdscr, row, col);
-
-    attron(COLOR_PAIR(1) | A_BOLD);
-
-    static const char *table[] = {
-        "TIMEOUT", "ARBID",
-        "DATA", "ASCII", NULL
-    };
-
-    int ct = 2;
-    int cr = row/4;
-
-    mvprintw(ct, 0, table[0]);
-    mvprintw(ct, (cr+strlen(table[0])), table[1]);
-    mvprintw(ct, (cr+cr+cr+strlen(table[1])), table[2]);
-    mvprintw(ct, col-strlen(table[3]), table[3]);
-
-    refresh();
-}
-
-int
-print_footer()
-{
-    int x, y;
-    initscr();
-    getmaxyx(stdscr, y, x);
-
-    attroff(A_BOLD);
-    mvprintw(y-1, 0, "mode: %s", sniff_type_names[0]);
-
-    refresh();
-}
-
-int
-init_win()
-{
-    initscr();
-    int x, y;
-    getmaxyx(stdscr, y, x);
-
-    row = x;
-    col = y;
-}
-
-int
-init_module()
-{
-    initscr();
-
-    flog("Initializing module.");
-    print_table();
-    print_footer();
-
-    sniff();
-
-    refresh();
-    //getch();
-}
 
 int 
 main(int argc, char *argv[])
 {
-    initscr(); /* must always init first */
-    init_win();
+    int index    = 0;
+    char *device;
 
-    ui_module(MODNAME, MODVERSION, INTERFACE, row, col);
+    ui_win(&row, &col);
+
+    say(MODNAME, "Buffering device default index to zero.");
+    strcpy(device, "*");
+
+    if (argc > 1) {
+        int index = interface_index(argv[1]);
+        strcpy(device, argv[1]); 
+    } 
+
+    char tty[50];
+    sprintf(tty, "%s:%d", device, index);
+
+    ui_module(MODNAME, MODVERSION, tty, row, col);
     ui_help(default_help_msg);
-    init_module();
+    ui_footer(sniff_type_names[0]);
+    ui_table(thead, sizeof(thead), &row, &col);
+
+    initialize(index);
 
     ui_freeze();
-    endwin();
+    return 1;
 }
 
+void
+initialize(int device_in)
+{
+    static struct ifreq ifr;
+    static struct sockaddr_ll sl;
+    static struct can_frame frame;
+    
+    int i;
+
+    time_t t_1, t_2;
+    char   delta[50];
+
+    int sock = create_socket();
+    sl       = bind_socket(device_in, &sock, sl);     
+
+    while (1) {
+        t_1 = time(0);
+        frame = read_socket(sock);
+        t_2 = time(0);
+
+        sniff(i++, frame, t_1, t_2);
+    }
+}
+
+void 
+sniff(int i, struct can_frame frame, time_t t_last, time_t t_curr)
+{
+    char delta[10];
+    char f_id[50];
+
+    snprintf(delta, 10, "%3f", t_last - t_curr);
+    snprintf(f_id, 50, "%8X", frame.can_id);
+
+    const char *r[] = {
+       delta, 
+       f_id
+    };
+
+    ui_table_row(r, i, row, col);
+}
