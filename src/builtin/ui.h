@@ -5,6 +5,8 @@
 
 const char *default_help_msg = "Press `q` to quit.";
 
+int last_row;
+
 /*
  * Display version name and module plus interface attached to it.
  *
@@ -102,6 +104,33 @@ ui_table(char *th[], int sth, int row, int col)
     mvprintw(ct, (cr+strlen(th[0])), th[1]);
     mvprintw(ct, (cr+cr+cr+strlen(th[1])), th[2]);
     mvprintw(ct, col-strlen(th[3]), th[3]);
+
+    refresh();
+}
+
+int
+ui_table_row(char *tr[], int in, int row, int col)
+{
+    int x, y;
+    initscr();
+    getmaxyx(stdscr, row, col);
+
+    attroff(COLOR_PAIR(1));
+    attroff(A_BOLD);
+
+    int ct = 2;
+    int cr = row/4;
+
+    if (in < 4) {
+        in = 4;
+    }
+
+    if (in >= (row - 10)) {
+        in = 4;
+    }
+
+    mvprintw(in, 0, tr[0]); 
+    mvprintw(in, (cr+strlen(tr[0])), tr[1]); 
 
     refresh();
 }

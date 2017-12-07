@@ -17,7 +17,7 @@ say(char *module, char *message)
     FILE *f;
     time_t dt  = time(NULL);
 
-    printf("%s\n", message);
+    //printf("%s\n", message);
 
     f = fopen(LOGFILE, "a+"); 
     if (f == NULL) { return; }
