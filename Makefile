@@ -10,10 +10,10 @@ BUILDCMD_OUT = $(BUILDOUT)/sniff
 
 all:
 	# builtin cmds
-	$(CC) -pthread -lncurses $(BUILDCMD_IN) -o $(BUILDCMD_OUT)
+	$(CC) -pthread -lncurses -lm $(BUILDCMD_IN) -o $(BUILDCMD_OUT)
 
 	# kernel
-	$(CC) -pthread -lncurses $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
+	$(CC) -pthread -lncurses -lm $(SOURCES) -o $(BUILDOUT)/$(PROJECT_NAME) 
 
 	# obj 
 	$(CC) -pthread -c $(SOURCES) 
