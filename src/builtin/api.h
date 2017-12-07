@@ -154,8 +154,7 @@ int
 interface_index(char* ifname)
 {
     int index;
-    //printf("Got index with name: %s\n", ifname);
-    //
+
     if ((0 == if_nametoindex(ifname))) {
         printf("Selecting all devices, device `%s` not found, index: %d\n", ifname, index);
     } else {
@@ -209,7 +208,13 @@ read_socket(int *socket)
         say(MODULE, "Invalid frame detected, what device is this?");
     } else {
         say(MODULE, "Got new frame, w00t!?");
+
+        if (frame.can_id & CAN_EFF_FLAG)
+            say(MODULE, "Frame is EFF flagged");
+        if (frame.can_id & CAN_RTR_FLAG)
+            say(MODULE, "Frame is RTR flagged");
     }
+
 }
 
 #endif
