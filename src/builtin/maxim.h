@@ -28,6 +28,8 @@ BUS_err_probability(int mer)
 {
     return (mer * 4.7 * (1 / (pow(10, 11))));
 }
+
+float mod(float a, float N) {return a - N*floor(a/N);} // return in range [0, N)
     
 float 
 engine_capacity(float bore, float stroke, int cylinder)
