@@ -290,6 +290,12 @@ read_socket(int *socket)
 }
 
 int
+get_crc_seq(struct can_frame *frame)
+{
+    calculate_crc_sequence
+}
+
+int
 is_crc_ok(struct can_frame *frame)
 {
     /** impl crc for frame */

@@ -30,7 +30,7 @@ calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, in
      * sizeof[(data fld) || (ctrl fld)] < CHAR_BIT * s (15) | 127
      */
     struct can_frame fd;
-    fd = &curr_frame;
+    fd = curr_frame;
 
     if (sizeof(fd) < 15)
         say(MODULE, "Current frame bitcount is less than 127 bits. I'll skip it.");
@@ -44,6 +44,11 @@ calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, in
      * Coefficents are are calculated using modulo-2. Once ready ...
      *
      * mod(data fld, 15)
+     */
+    canid_t canid;
+    canid = fd.can_id;
+
+    /**
      *
      * This polynomial is then devided by generator polynomial:
      *
