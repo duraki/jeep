@@ -10,7 +10,7 @@
  * Copyright (c) 2017 Halis Duraki. All rights reserved.
  *
  * Author:
- * Halis Duraki <duraki.halis@nsoft.com> 
+ * Halis Duraki <duraki@linuxmail.org> 
  *
  *           ____________ ____ 
  *          / /__  /__  // __ \

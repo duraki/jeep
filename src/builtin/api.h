@@ -52,6 +52,7 @@
 
 #include "util.h"
 #include "maxim.h"
+#include "bus/bus.h"
 
 #define MAXIFACE 30     /* max. number of all interfaces */
 #define MAXSOCK 16      /* max. number of CAN interfaces */
@@ -224,6 +225,18 @@ __create_api_uds()
     say(MODULE, "Socket created at /tmp/jeep.sock");
 }
 
+void
+__set_bitrate(int br)
+{
+    /** impl set bitrate */
+
+    /**
+     *
+     * By specification the CAN speed can be either fixed or different based on
+     * project specs.
+     */
+}
+
 /**
  * Read frame by frame from binded socket. Validate frame data and prepare
  * everything for resize. A frame is data in a CAN format defined by rfc 
@@ -246,11 +259,57 @@ read_socket(int *socket)
     } else {
         say(MODULE, "Got new frame, w00t!?");
 
+        /**
+         * Ah, the fun part of vehicles is that the network has to be really
+         * fast for all micropcs to speak with each other. CAN forced this with
+         * a base `data` frame and three others: `remote`, `error` and `overload`.
+         *
+         * Properly check which frame flag is in this blob so we can achieve
+         * valid measurements.
+         */
         if (frame.can_id & CAN_EFF_FLAG)
             say(MODULE, "Frame is EFF flagged");
         if (frame.can_id & CAN_RTR_FLAG)
             say(MODULE, "Frame is RTR flagged");
+
+
+        /**
+         * Standard and extended frames (canfd) may exists on the bus. A node can
+         * transmit any so prepare buflen for frame data. The pitchpoint is when
+         * a extframe takes priority, even when broadcasted with same arbid, so
+         * parse standard can frames first which have higher priority.
+         *
+         * The SOF on CANFD have ARB len greater in bsize then equal normal
+         * frame. What is interesting is that you can't read where the frame has
+         * been sent. This is Bosch way of security - equaly to that, all nodes
+         * in a vehicle should know if the frame is important to them.
+         *
+         * @see `can.h`
+         */
     }
+}
+
+int
+is_crc_ok(struct can_frame *frame)
+{
+    /** impl crc for frame */
+
+    /**
+     * By default, there are many safety features on CAN network either on bus
+     * or nodes. How these are done includes various params but cyclic
+     * redundancy check is by far the most used one.
+     */
+}
+
+int
+is_mfc_ok(struct can_frame *frame)
+{
+    /** impl mfc for given frame */
+
+    /**
+     * The message frame check is a type of action on bus that detects if given
+     * frame is anyhow valid or registered in the system.
+     */
 }
 
 #endif

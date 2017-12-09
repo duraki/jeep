@@ -15,6 +15,19 @@
 #include <math.h>
 
 #define PI 3.14159265358979
+
+/**
+ * Lets get total residual error probability on our CAN bus. We can get these by 
+ * using power of 10 on whole nxp (a)`-b = 1/(a`b).
+ *
+ * @mer int message error rate
+ * @return float err probability
+ */
+float
+BUS_err_probability(int mer)
+{
+    return (mer * 4.7 * (1 / (pow(10, 11))));
+}
     
 float 
 engine_capacity(float bore, float stroke, int cylinder)

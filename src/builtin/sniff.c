@@ -8,7 +8,7 @@
  * Copyright (c) 2017 Halis Duraki. All rights reserved.
  *
  * Author:
- * Halis Duraki <duraki.halis@nsoft.com> 
+ * Halis Duraki <duraki@linuxmail.org> 
  *
  *           ____________ ____ 
  *          / /__  /__  // __ \
@@ -151,7 +151,7 @@ sniff(int i, struct can_frame frame, time_t t_last, time_t t_curr)
     char f_id[50];
 
     snprintf(delta, 10, "%3f", t_last - t_curr);
-    snprintf(f_id, 50, "%8X", frame.can_id);
+    snprintf(f_id, 50, "%d", frame.can_id);
 
     const char *r[] = {
        delta, 
