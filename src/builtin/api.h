@@ -12,7 +12,7 @@
  * Copyright (c) 2017 Halis Duraki. All rights reserved.
  *
  * Author:
- * Halis Duraki <duraki.halis@nsoft.com> 
+ * Halis Duraki <duraki@linuxmail.org> 
  *
  **/
 
@@ -29,10 +29,13 @@
 #include <libgen.h>
 #include <time.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/uio.h>
 #include <linux/if.h>
@@ -147,6 +150,8 @@ create_socket()
     snprintf(s_ind, 50, "SOCKT: created socket instance ... %d", s);
     say(MODULE, s_ind);
 
+    __create_api_uds();
+
     return s;
 }
 
@@ -164,12 +169,14 @@ interface_index(char* ifname)
     return if_nametoindex(ifname);
 }
 
-/*
- * Bind to socket.
+/**
+ * Bind to socket for reference use. After creating the socket we need to bridge
+ * tty with sockaddr. We will do that and check if socket is properly binded.
+ * Such operation requires priviledged user.
  *
- * irf: interface index
- * socket: socket 
- * sl: ll header
+ * @if_in int interface index
+ * @socket int socket index
+ * @sl socket address
  */
 struct sockaddr_ll
 bind_socket(int if_in, int *socket, struct sockaddr_ll sl)
@@ -194,6 +201,36 @@ bind_socket(int if_in, int *socket, struct sockaddr_ll sl)
     return sl;
 }
 
+/**
+ * Creates an Unix Domain socket for protocol communication. This is a private
+ * method and should not be utilized by external module.
+ *
+ * One can read from the socket to validate binlog.
+ */
+void
+__create_api_uds()
+{
+    int fd;
+    char * sp = "/tmp/jeep.sock";
+    struct sockaddr_un sockadr;
+
+    sockadr.sun_family = AF_UNIX;
+    strncpy(sockadr.sun_path, (char *)sp, sizeof(sockadr.sun_path));
+
+    fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+    bind(fd, (struct sockaddr *) &sockadr, sizeof(struct sockaddr_un));
+    close(fd);
+
+    say(MODULE, "Socket created at /tmp/jeep.sock");
+}
+
+/**
+ * Read frame by frame from binded socket. Validate frame data and prepare
+ * everything for resize. A frame is data in a CAN format defined by rfc 
+ * 2358, and Robert Bosch GmbH in '91.
+ *
+ * @socket int
+ */
 struct can_frame
 read_socket(int *socket)
 {
@@ -214,7 +251,6 @@ read_socket(int *socket)
         if (frame.can_id & CAN_RTR_FLAG)
             say(MODULE, "Frame is RTR flagged");
     }
-
 }
 
 #endif
