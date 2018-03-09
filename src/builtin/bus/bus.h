@@ -41,10 +41,4 @@ errors()
 int
 calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, int seq);
 
-void
-__prepare_for_ack()
-{
-
-}
-
 #endif

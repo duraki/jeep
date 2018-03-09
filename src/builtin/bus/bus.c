@@ -45,8 +45,10 @@ calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, in
      *
      * mod(data fld, 15)
      */
-    canid_t canid;
+    canid_t canid; /** can id **/
     canid = fd.can_id;
+
+    int f_len; /** can frame length **/
 
     /**
      *
@@ -62,7 +64,7 @@ calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, in
      * --
      * CRC_RG = 0; # => Initialize shift register
      *
-     * do { # => Do until got crc seq start
+     * do { # => Do until got crc seq start (pseudo)
      *      CRCNXT       = NXTBIT XOR CRC_RG(14) # => eq: nxtbit ⊕ crc_rg
      *      CRC_RG(14:1) = CRC_RG(13:0); # => shift left by one bit
      *      CRC_RG(0)    = 0;
@@ -82,6 +84,9 @@ calculate_crc_sequence(struct can_frame l_frame, struct can_frame curr_frame, in
      *
      * @see BUS_TYPE
      *
+     * In order to carry out CRC, polynomial to be divided is defined as the
+     * polynomial a = a, but the thing is there are different CAN layers @
+     * ISO-*. What we have to do is defined netd of tty/ttl.
      *
      * Finally __prepare_for_ack() to initialize data before EOF.
      *
