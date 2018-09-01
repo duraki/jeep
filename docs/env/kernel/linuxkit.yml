@@ -1,0 +1,13 @@
+kernel:
+  image: linuxkit/kernel:4.18.1
+  cmdline: "console=ttyS0 console=ttyAMA0"
+init:
+  - linuxkit/init
+  - linuxkit/runc
+onboot:
+  # debug
+  # - name: check-kernel-config
+  #   image: linuxkit/test-kernel-config
+  - name: modprobe
+    image: linuxkit/modprobe
+    command: ["modprobe", "vcan"]

@@ -1,0 +1,14 @@
+---
+- name: kmod Dockerfile
+  template:
+    src: Dockerfile
+    dest: /tmp/.jeep/build/{{ kmod_build_tag }}/Dockerfile
+
+- name: Build docker container
+  command: docker build -t . {{ kmod_build_tag }}
+  args:
+    chdir: /tmp/.jeep/build/
+
+- name: Build kernel module
+  # xxx: 
+  # command: docker run 
