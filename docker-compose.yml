@@ -2,9 +2,10 @@ version: "3"
 services:
 
     jeep:
+        privileged: true
         build: .
         container_name: jeep
-        tty: true    
+        tty: true
         cap_add:
             - ALL
         volumes:
