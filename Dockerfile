@@ -11,7 +11,7 @@ MAINTAINER Halis Duraki <duraki@linuxmail.org>
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
-RUN apt-get -y install bash build-essential git net-tools vim gcc ncurses-dev make wget git module-init-tools
+RUN apt-get -y install bash build-essential git net-tools vim gcc ncurses-dev make wget git module-init-tools can-utils libx11-dev libc6-dev libncurses5-dev ia32-libs
 
 #RUN modprobe vcan
 #RUN ip link add dev vcan0 type vcan

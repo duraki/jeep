@@ -42,8 +42,8 @@
 
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
-#include <linux/can.h>
-#include <linux/can/raw.h>
+#include "linux/can.h"
+#include "linux/can/raw.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -272,6 +272,8 @@ read_socket(int *socket)
         if (frame.can_id & CAN_RTR_FLAG)
             say(MODULE, "Frame is RTR flagged");
 
+    }
+
 
         /**
          * Standard and extended frames (canfd) may exists on the bus. A node can
@@ -286,13 +288,13 @@ read_socket(int *socket)
          *
          * @see `can.h`
          */
-    }
 }
 
 int
 get_crc_seq(struct can_frame *frame)
 {
-    calculate_crc_sequence
+    //calculate_crc_sequence
+    return 0;
 }
 
 int

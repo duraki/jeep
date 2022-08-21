@@ -10,6 +10,29 @@ also an API header file available for reuse and faster module writings.
 Code is documented in pseudo manner mostly reducted to Bosch standards. Whole
 framework is written in C and is very unstable.
 
+## Install
+
+**For GNU/Linux Operating Systems** 
+
+```
+$ git clone https://github.com/duraki/jeep
+$ cd jeep 
+$ make all
+```
+
+**For XNU-based Operating Systems**
+
+```
+$ docker-compose up
+$ docker exec -it jeep /bin/bash
+```
+
+**Build, and compile the program**
+
+```
+$ make all
+```
+
 ## How
 
 `jeep` works with CAN protcol whcih Bosch defined back in the old days. Using
@@ -40,3 +63,4 @@ framework with newest modules.
   
 If you are a C developer, be free to jump in and contribute with your lines,
 your code is appreciated.
+

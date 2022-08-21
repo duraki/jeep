@@ -36,9 +36,10 @@
 #include <sys/ioctl.h>
 #include <sys/uio.h>
 
-#include <linux/if.h>
-#include <linux/can.h>
-#include <linux/can/bcm.h>
+//#include <linux/if.h>
+#include <net/if.h>
+#include "linux/can.h"
+#include "linux/can/bcm.h"
 
 #include "api.h"
 #include "ui.h"
