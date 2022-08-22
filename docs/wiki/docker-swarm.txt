@@ -1,0 +1,23 @@
+pi@raspberrypi:~/jeep $ docker network create --driver bridge isolated_bridge
+d0ebdb05288c88d82fe0f5b6dd9e5dd2dc880cf8e7f52837597468dc2d79792e
+pi@raspberrypi:~/jeep $ docker run --net=isolated_bridge -it --name macvlan70_1 --rm alpine /bin/sh
+/ # ifconfig
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:14:00:02
+          inet addr:172.20.0.2  Bcast:172.20.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:37 errors:0 dropped:1 overruns:0 frame:0
+          TX packets:4 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:5095 (4.9 KiB)  TX bytes:689 (689.0 B)
+
+
+
+galaxy@devil. jeep master × docker network create --driver bridge isolated_bridge
+galaxy@devil. ~  docker exec -it jeep /bin/bash
+root@23da7ac547cc:/# apt install iputils-ping
+root@23da7ac547cc:/# ping 172.20.0.2
+PING 172.20.0.2 (172.20.0.2) 56(84) bytes of data.
+64 bytes from 172.20.0.2: icmp_seq=1 ttl=64 time=0.030 ms
+64 bytes from 172.20.0.2: icmp_seq=2 ttl=64 time=0.045 ms
+^C
+

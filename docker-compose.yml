@@ -10,3 +10,12 @@ services:
             - ALL
         volumes:
             - "./:/opt/jeep:delegated"
+        networks:
+          - isolated_bridge
+
+networks:
+
+    isolated_bridge:
+        name: isolated_bridge
+        internal: false
+        attachable: true
